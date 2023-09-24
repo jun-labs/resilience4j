@@ -1,6 +1,6 @@
 # Retry without Spring
 
-Execute method and implement retry logic when exception occurs, without SpringBoot. [Referenced.](https://www.inflearn.com/course/%EC%9E%A5%EC%95%A0%EC%97%86%EB%8A%94-%EC%84%9C%EB%B9%84%EC%8A%A4-resilience4j-circuitbreaker/dashboard)
+Retry practice without Spring. [Referenced.](https://www.inflearn.com/course/%EC%9E%A5%EC%95%A0%EC%97%86%EB%8A%94-%EC%84%9C%EB%B9%84%EC%8A%A4-resilience4j-circuitbreaker/dashboard)
 
 
 <br/><br/><br/><br/>
@@ -17,7 +17,7 @@ Execute method and implement retry logic when exception occurs, without SpringBo
 $ ./gradlew build
 ````
 
-<br/><br/>
+<br/><br/><br/>
 
 ## Result
 
