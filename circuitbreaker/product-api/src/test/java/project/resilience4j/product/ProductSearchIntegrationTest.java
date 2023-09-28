@@ -14,6 +14,7 @@ import project.resilience4j.product.core.web.exception.ProductNotFoundException;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DisplayName("[IntegrationTest] 상품 조회 통합 테스트")
 class ProductSearchIntegrationTest {
 
     @Autowired
