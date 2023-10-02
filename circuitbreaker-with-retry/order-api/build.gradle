@@ -1,0 +1,14 @@
+dependencies {
+    implementation(project(":support"))
+
+    // Feign
+    implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    // Retry
+    implementation("org.springframework.retry:spring-retry")
+
+    // Resilience4j
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+}
