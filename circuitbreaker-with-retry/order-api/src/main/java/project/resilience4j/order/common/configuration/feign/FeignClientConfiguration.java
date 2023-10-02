@@ -3,6 +3,7 @@ package project.resilience4j.order.common.configuration.feign;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import feign.Logger;
 import feign.Request;
 import feign.RequestInterceptor;
