@@ -40,6 +40,10 @@ public enum CommonErrorCodeAndMessage implements ErrorCodeAndMessage {
     BAD_GATEWAY(502,
         "외부 서버와 통신하는 과정에서 오류가 발생했습니다.",
         "An error occurred while communicating with the external server."
+    ),
+    RETRY(600,
+            "일시적 오류로 재시도 합니다.",
+            "Retry attempt."
     );
 
     private final int code;
