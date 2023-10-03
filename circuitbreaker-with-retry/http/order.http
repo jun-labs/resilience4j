@@ -1,0 +1,7 @@
+POST localhost:{ORDER_MODULE_PORT}/api/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "productId": 2
+}
