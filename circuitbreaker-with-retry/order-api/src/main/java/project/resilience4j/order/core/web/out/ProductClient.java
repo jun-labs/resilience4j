@@ -30,22 +30,24 @@ public class ProductClient {
         Retry retry = retryRegistry.retry(PRODUCT_SEARCH_RETRY_CONFIGURATION);
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(PRODUCT_SEARCH_RETRY_CONFIGURATION);
 
-        Supplier<ProductResponse> supplier = Retry.decorateSupplier(retry, () -> callAPI(productId));
+        Supplier<ProductResponse> supplier =
+                Retry.decorateSupplier(retry, () -> callAPI(productId));
         supplier = CircuitBreaker.decorateSupplier(circuitBreaker, supplier);
 
         try {
             return supplier.get();
         } catch (BadGatewayException e) {
+            log.error("The circuit has increased the failure count.");
             throw new ProductNotFoundException();
         }
     }
-
 
     public ProductResponse callAPI(Long productId) {
         try {
             return productSearchFeignClient.findProduct(productId);
         } catch (FeignException exception) {
             if (exception.status() == 502) {
+                log.error("Retry attempt.");
                 throw new BadGatewayException();
             }
             throw new ProductNotFoundException();
