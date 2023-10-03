@@ -1,0 +1,8 @@
+spring:
+  application.name: resilience4j-practice
+
+server:
+  port: ${PORT}
+
+url:
+  product-server: localhost:${PRODUCT_MODULE_PORT}/api/products
