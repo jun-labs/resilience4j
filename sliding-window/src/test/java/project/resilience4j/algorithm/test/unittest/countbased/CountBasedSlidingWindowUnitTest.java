@@ -1,6 +1,7 @@
 package project.resilience4j.algorithm.test.unittest.countbased;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.resilience4j.algorithm.CircuitBreaker;
@@ -31,9 +32,9 @@ class CountBasedSlidingWindowUnitTest {
 
     private void recordRequestStatus(int index) {
         if (index % 5 == 0) {
-            countBasedSlidingWindow.recordFailure();
+            countBasedSlidingWindow.recordRequest(false);
         } else {
-            countBasedSlidingWindow.recordSuccess();
+            countBasedSlidingWindow.recordRequest(true);
         }
     }
 }
