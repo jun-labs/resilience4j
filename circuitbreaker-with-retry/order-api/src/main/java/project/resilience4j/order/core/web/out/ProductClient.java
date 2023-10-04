@@ -15,6 +15,7 @@ import project.resilience4j.order.core.web.out.product.ProductSearchFeignClient;
 
 import java.util.function.Supplier;
 
+import static io.github.resilience4j.circuitbreaker.CircuitBreaker.decorateSupplier;
 import static project.resilience4j.order.common.configuration.resilience4j.Resilience4jConfiguration.PRODUCT_SEARCH_RETRY_CONFIGURATION;
 
 @Slf4j
@@ -29,17 +30,25 @@ public class ProductClient {
     public ProductResponse findProductById(Long productId) {
         Retry retry = retryRegistry.retry(PRODUCT_SEARCH_RETRY_CONFIGURATION);
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(PRODUCT_SEARCH_RETRY_CONFIGURATION);
-
-        Supplier<ProductResponse> supplier =
-                Retry.decorateSupplier(retry, () -> callAPI(productId));
-        supplier = CircuitBreaker.decorateSupplier(circuitBreaker, supplier);
+        Supplier<ProductResponse> productSearchSupplier =
+                getProductResponseSupplier(productId, retry, circuitBreaker);
 
         try {
-            return supplier.get();
+            return productSearchSupplier.get();
         } catch (BadGatewayException e) {
             log.error("The circuit has increased the failure count.");
             throw new ProductNotFoundException();
         }
+    }
+
+    private Supplier<ProductResponse> getProductResponseSupplier(
+            Long productId,
+            Retry retry,
+            CircuitBreaker circuitBreaker
+    ) {
+        Supplier<ProductResponse> productSearchSupplier = Retry.decorateSupplier(retry, () -> callAPI(productId));
+        productSearchSupplier = decorateSupplier(circuitBreaker, productSearchSupplier);
+        return productSearchSupplier;
     }
 
     public ProductResponse callAPI(Long productId) {
