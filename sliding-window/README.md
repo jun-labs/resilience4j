@@ -2,6 +2,8 @@
 
 Learning [resilience4j](https://github.com/resilience4j/resilience4j) sliding-window algorithm.
 
+> Multi-thread is not considered.
+
 
 <br/><br/><br/><br/>
 
