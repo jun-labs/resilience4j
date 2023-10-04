@@ -35,24 +35,22 @@ public class ProductClient {
         Retry retry = retryRegistry.retry(PRODUCT_SEARCH_RETRY_CONFIGURATION);
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(PRODUCT_SEARCH_RETRY_CONFIGURATION);
 
-        Supplier<CompletableFuture<ProductResponse>> productSupplier =
+        Supplier<CompletableFuture<ProductResponse>> productSearchSupplier =
                 () -> CompletableFuture.supplyAsync(() -> productSearchFeignClient.findProduct(productId));
 
         Supplier<CompletableFuture<ProductResponse>> timeLimiterSupplier =
-                () -> timeLimiter.executeCompletionStage(scheduler, productSupplier).toCompletableFuture();
+                () -> timeLimiter.executeCompletionStage(scheduler, productSearchSupplier).toCompletableFuture();
 
-        Supplier<ProductResponse> decoratedSupplier = Retry.decorateSupplier(
+        Supplier<ProductResponse> decoratorSupplier = Retry.decorateSupplier(
                 retry,
                 CircuitBreaker.decorateSupplier(circuitBreaker,
                         () -> execute(timeLimiterSupplier)
                 )
         );
-        return getProductResponse(decoratedSupplier);
+        return getProductResponse(decoratorSupplier);
     }
 
-    private ProductResponse execute(
-            Supplier<CompletableFuture<ProductResponse>> supplier
-    ) {
+    private ProductResponse execute(Supplier<CompletableFuture<ProductResponse>> supplier) {
         try {
             return supplier.get().get();
         } catch (InterruptedException e) {
@@ -62,7 +60,7 @@ public class ProductClient {
             if (throwable instanceof FeignException && ((FeignException) throwable).status() == 404) {
                 log.error("Retry attempt.");
                 Retry retry = retryRegistry.retry(PRODUCT_SEARCH_RETRY_CONFIGURATION);
-                if (retry.getMetrics().getNumberOfFailedCallsWithRetryAttempt() >= retry.getRetryConfig().getMaxAttempts() - 1) {
+                if (overMaxRetryCount(retry)) {
                     throw new ProductNotFoundException();
                 }
                 throw new RetryException("Retry attempt.");
@@ -73,9 +71,11 @@ public class ProductClient {
         }
     }
 
-    private static ProductResponse getProductResponse(
-            Supplier<ProductResponse> supplier
-    ) {
+    private boolean overMaxRetryCount(Retry retry) {
+        return retry.getMetrics().getNumberOfFailedCallsWithRetryAttempt() >= retry.getRetryConfig().getMaxAttempts() - 1;
+    }
+
+    private ProductResponse getProductResponse(Supplier<ProductResponse> supplier) {
         try {
             return supplier.get();
         } catch (RetryException exception) {
