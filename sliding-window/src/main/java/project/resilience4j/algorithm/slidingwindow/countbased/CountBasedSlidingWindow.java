@@ -1,9 +1,10 @@
 package project.resilience4j.algorithm.slidingwindow.countbased;
 
-import java.util.LinkedList;
 import lombok.extern.slf4j.Slf4j;
 import project.resilience4j.algorithm.CircuitBreaker;
 import project.resilience4j.algorithm.slidingwindow.RequestAllowable;
+
+import java.util.LinkedList;
 
 @Slf4j
 public class CountBasedSlidingWindow implements RequestAllowable {
@@ -15,9 +16,9 @@ public class CountBasedSlidingWindow implements RequestAllowable {
     private final CircuitBreaker circuitBreaker;
 
     public CountBasedSlidingWindow(
-        int windowSize,
-        double failureThreshold,
-        CircuitBreaker circuitBreaker
+            int windowSize,
+            double failureThreshold,
+            CircuitBreaker circuitBreaker
     ) {
         this.windowSize = windowSize;
         this.failureThreshold = failureThreshold;
@@ -27,35 +28,27 @@ public class CountBasedSlidingWindow implements RequestAllowable {
 
     @Override
     public boolean allowRequest() {
-        synchronized (window) {
-            int currentWindowSize = window.size();
-            if (currentWindowSize == 0) {
-                return true;
-            }
-
-            boolean allowRequest = (double) failureCount / currentWindowSize < failureThreshold;
-            if (!allowRequest) {
-                circuitBreaker.open();
-                log.info("Circuit OPENED.");
-            } else {
-                if (circuitBreaker.opened()) {
-                    circuitBreaker.close();
-                }
-            }
-            return allowRequest;
+        int currentWindowSize = window.size();
+        if (currentWindowSize == 0) {
+            recordRequest(true);
+            return true;
         }
+
+        boolean allowRequest = (double) failureCount / currentWindowSize < failureThreshold;
+        if (!allowRequest) {
+            circuitBreaker.open();
+            log.info("Circuit OPENED.");
+        } else {
+            if (circuitBreaker.opened()) {
+                circuitBreaker.close();
+            }
+        }
+        return allowRequest;
     }
 
-    public void recordSuccess() {
-        synchronized (window) {
-            addRequestToWindow(true);
-        }
-    }
-
-    public void recordFailure() {
-        synchronized (window) {
-            addRequestToWindow(false);
-        }
+    @Override
+    public void recordRequest(boolean isSuccess) {
+        addRequestToWindow(isSuccess);
     }
 
     private void addRequestToWindow(boolean isSuccess) {

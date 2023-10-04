@@ -1,14 +1,15 @@
 package project.resilience4j.algorithm.slidingwindow.timebased;
 
-import java.time.Instant;
-import java.util.LinkedList;
 import lombok.extern.slf4j.Slf4j;
 import project.resilience4j.algorithm.CircuitBreaker;
 import project.resilience4j.algorithm.slidingwindow.RequestAllowable;
 import project.resilience4j.algorithm.slidingwindow.timebased.request.ClientRequest;
 
+import java.time.Instant;
+import java.util.LinkedList;
+
 @Slf4j
-public class TimebasedSlidingWindow implements RequestAllowable {
+public class TimeBasedSlidingWindow implements RequestAllowable {
 
     private final long windowDurationMillis;
     private final double failureThreshold;
@@ -16,10 +17,10 @@ public class TimebasedSlidingWindow implements RequestAllowable {
     private final CircuitBreaker circuitBreaker;
     private int failureCount;
 
-    public TimebasedSlidingWindow(
-        long windowDurationMillis,
-        double failureThreshold,
-        CircuitBreaker circuitBreaker
+    public TimeBasedSlidingWindow(
+            long windowDurationMillis,
+            double failureThreshold,
+            CircuitBreaker circuitBreaker
     ) {
         this.windowDurationMillis = windowDurationMillis;
         this.failureThreshold = failureThreshold;
@@ -31,6 +32,7 @@ public class TimebasedSlidingWindow implements RequestAllowable {
     public boolean allowRequest() {
         initRequestHistory();
         if (window.isEmpty()) {
+            recordRequest(true);
             return true;
         }
 
@@ -46,17 +48,14 @@ public class TimebasedSlidingWindow implements RequestAllowable {
         return isSuccess;
     }
 
-    public void recordSuccess() {
-        addRequestToWindow(true);
-    }
-
-    public void recordFailure() {
-        addRequestToWindow(false);
+    @Override
+    public void recordRequest(boolean isSuccess) {
+        addRequestToWindow(isSuccess);
     }
 
     private void addRequestToWindow(boolean isSuccess) {
         initRequestHistory();
-        ClientRequest request = new ClientRequest(isSuccess, Instant.now().toEpochMilli());
+        ClientRequest request = new ClientRequest(isSuccess, getMillis(Instant.now()));
         window.add(request);
         if (!isSuccess) {
             failureCount++;
@@ -64,13 +63,17 @@ public class TimebasedSlidingWindow implements RequestAllowable {
     }
 
     private void initRequestHistory() {
-        long current = Instant.now().toEpochMilli();
+        long current = getMillis(Instant.now());
         while (!window.isEmpty() && isBeforeFirstRequest(current)) {
             ClientRequest firstRequest = window.removeFirst();
             if (!firstRequest.isSuccess()) {
                 failureCount--;
             }
         }
+    }
+
+    private long getMillis(Instant time) {
+        return time.toEpochMilli();
     }
 
     private boolean isBeforeFirstRequest(long current) {
