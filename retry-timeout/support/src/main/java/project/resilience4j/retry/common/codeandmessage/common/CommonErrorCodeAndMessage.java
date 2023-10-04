@@ -4,47 +4,47 @@ import project.resilience4j.retry.common.codeandmessage.ErrorCodeAndMessage;
 
 public enum CommonErrorCodeAndMessage implements ErrorCodeAndMessage {
     INVALID_CLIENT_REQUEST(
-        400,
-        "올바르지 않은 요청입니다.",
-        "Invalid client request."
+            400,
+            "올바르지 않은 요청입니다.",
+            "Invalid client request."
     ),
     API_SPEC_UN_MATCHED(
-        400,
-        "외부 서버 API 스펙과 매핑을 확인해주세요.",
-        "Please check the external server API specification and mapping."
+            400,
+            "외부 서버 API 스펙과 매핑을 확인해주세요.",
+            "Please check the external server API specification and mapping."
     ),
     INVALID_PATH_VARIABLE(
-        400,
-        "올바른 PATH 경로를 확인해주세요.",
-        "Please check the correct path."
+            400,
+            "올바른 PATH 경로를 확인해주세요.",
+            "Please check the correct path."
     ),
     INVALID_QUERY_PARAMETERS(
-        400,
-        "올바른 파라미터를 입력해주세요.",
-        "Please enter the correct parameters."
+            400,
+            "올바른 파라미터를 입력해주세요.",
+            "Please enter the correct parameters."
     ),
     UN_AUTHORIZED(
-        401,
-        "권한이 존재하지 않습니다.",
-        "Permission does not exist."
+            401,
+            "권한이 존재하지 않습니다.",
+            "Permission does not exist."
     ),
     URL_NOTFOUND(
-        404,
-        "존재하지 않는 URL 입니다.",
-        "URL does not exist."
+            404,
+            "존재하지 않는 URL 입니다.",
+            "URL does not exist."
     ),
     REQUEST_TIMEOUT(
             408,
-            "408",
-            "408"
+            "요청 시간이 초과되었습니다.",
+            "Request timed out."
     ),
     INTERNAL_SERVER_ERROR(500,
-        "서버 내부 오류입니다.",
-        "Internal server error."
+            "서버 내부 오류입니다.",
+            "Internal server error."
     ),
     BAD_GATEWAY(502,
-        "외부 서버와 통신하는 과정에서 오류가 발생했습니다.",
-        "An error occurred while communicating with the external server."
+            "외부 서버와 통신하는 과정에서 오류가 발생했습니다.",
+            "An error occurred while communicating with the external server."
     );
 
     private final int code;
@@ -52,9 +52,9 @@ public enum CommonErrorCodeAndMessage implements ErrorCodeAndMessage {
     private final String engErrorMessage;
 
     CommonErrorCodeAndMessage(
-        int code,
-        String krErrorMessage,
-        String engErrorMessage
+            int code,
+            String krErrorMessage,
+            String engErrorMessage
     ) {
         this.code = code;
         this.krErrorMessage = krErrorMessage;
