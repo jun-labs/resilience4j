@@ -1,0 +1,27 @@
+### 200 OK ###
+POST localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "productId": 1
+}
+
+### 404 NOT_FOUND ###
+POST localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "productId": 4
+}
+
+
+### 408 REQUEST_TIMEOUT ###
+POST localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "productId": 502
+}
