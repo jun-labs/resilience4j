@@ -9,7 +9,7 @@
 
 ## Getting Started
 
-Put the application.yml, application-test.yml before running the application.
+You must set up application.yml, application-test.yml for each module before running the program.
 
 > You should install jdk 17 or higher. <br/>
 
