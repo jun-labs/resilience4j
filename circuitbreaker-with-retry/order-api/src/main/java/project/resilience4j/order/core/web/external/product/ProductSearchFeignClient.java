@@ -1,4 +1,4 @@
-package project.resilience4j.order.core.web.out.product;
+package project.resilience4j.order.core.web.external.product;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
