@@ -10,9 +10,7 @@ pluginManagement {
         }
     }
 }
+
+include("product-api", "order-api")
 rootProject.name = "circuit-breaker-with-retry"
-include(
-        'product-api',
-        'order-api',
-        'support'
-)
+
